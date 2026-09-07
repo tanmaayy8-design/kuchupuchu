@@ -2,215 +2,659 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kuchupuchu ❤️</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>For My Kuchupuchu ❤️</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box}
+:root{
+  --bg:#09070a;
+  --card:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.14);
+  --text:#fff8fb;
+  --muted:rgba(255,255,255,.62);
+  --pink:#ff6f9f;
+  --soft:#ffd4e2;
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
 
 body{
-margin:0;
-min-height:100vh;
-font-family:Arial,sans-serif;
-color:white;
-background:linear-gradient(135deg,#160914,#541735,#190914);
-overflow-x:hidden;
+  min-height:100vh;
+  color:var(--text);
+  font-family:"DM Sans",sans-serif;
+  background:
+    radial-gradient(circle at 20% 10%,rgba(255,91,145,.18),transparent 30%),
+    radial-gradient(circle at 85% 80%,rgba(164,65,122,.16),transparent 30%),
+    linear-gradient(145deg,#09070a,#170b13 48%,#080608);
+  overflow-x:hidden;
 }
 
-.hearts{
-position:fixed;
-inset:0;
-pointer-events:none;
-overflow:hidden;
+/* ---------- BACKGROUND ---------- */
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:45px 45px;
+  mask-image:linear-gradient(to bottom,black,transparent);
 }
 
-.heart{
-position:absolute;
-bottom:-50px;
-animation:up 9s linear infinite;
-opacity:.25;
+.glow{
+  position:fixed;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  filter:blur(90px);
+  opacity:.16;
+  pointer-events:none;
+  animation:drift 12s ease-in-out infinite alternate;
 }
 
-@keyframes up{
-0%{transform:translateY(0) rotate(0);opacity:0}
-20%{opacity:.3}
-100%{transform:translateY(-115vh) rotate(360deg);opacity:0}
+.glow.one{
+  background:#ff4f91;
+  top:-80px;
+  left:-80px;
 }
 
-.container{
-width:92%;
-max-width:520px;
-margin:auto;
-padding:30px 0 60px;
+.glow.two{
+  background:#9e4dff;
+  right:-100px;
+  bottom:-80px;
+  animation-delay:-5s;
+}
+
+@keyframes drift{
+  from{transform:translate(0,0) scale(1)}
+  to{transform:translate(40px,25px) scale(1.15)}
+}
+
+/* ---------- FLOATING HEARTS ---------- */
+
+#particles{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:1;
+}
+
+.particle{
+  position:absolute;
+  bottom:-50px;
+  opacity:0;
+  animation:floatUp linear infinite;
+  filter:drop-shadow(0 0 8px rgba(255,105,155,.35));
+}
+
+@keyframes floatUp{
+  0%{
+    transform:translateY(0) translateX(0) rotate(0deg) scale(.7);
+    opacity:0;
+  }
+  12%{opacity:.35}
+  80%{opacity:.22}
+  100%{
+    transform:translateY(-115vh) translateX(var(--drift)) rotate(360deg) scale(1.15);
+    opacity:0;
+  }
+}
+
+/* ---------- LAYOUT ---------- */
+
+.wrap{
+  position:relative;
+  z-index:2;
+  width:min(94%,560px);
+  margin:auto;
+  padding:24px 0 70px;
 }
 
 .card{
-background:rgba(255,255,255,.10);
-border:1px solid rgba(255,255,255,.18);
-border-radius:28px;
-padding:25px;
-backdrop-filter:blur(18px);
-box-shadow:0 20px 60px rgba(0,0,0,.4);
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:linear-gradient(
+    145deg,
+    rgba(255,255,255,.10),
+    rgba(255,255,255,.035)
+  );
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
+  border-radius:32px;
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.48),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  padding:30px 24px;
 }
 
-.center{text-align:center}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(
+    120deg,
+    rgba(255,255,255,.08),
+    transparent 35%,
+    transparent 70%,
+    rgba(255,105,155,.04)
+  );
+}
 
-.emoji{font-size:55px}
+.hidden{
+  display:none!important;
+}
 
-h1{
-font-size:32px;
-margin:8px 0;
+/* ---------- LOGIN ---------- */
+
+.login{
+  margin-top:7vh;
+  animation:cardIn 1s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes cardIn{
+  from{
+    opacity:0;
+    transform:translateY(35px) scale(.97);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.brand{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.love-symbol{
+  width:76px;
+  height:76px;
+  margin:0 auto 18px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  font-size:32px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:
+    0 0 35px rgba(255,105,155,.16),
+    inset 0 1px 0 rgba(255,255,255,.1);
+  animation:pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.055)}
+}
+
+.kicker{
+  color:var(--pink);
+  font-size:11px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+h1,h2{
+  font-family:"Cormorant Garamond",serif;
+  font-weight:600;
+  letter-spacing:.3px;
+}
+
+.brand h1{
+  font-size:46px;
+  line-height:.95;
 }
 
 .subtitle{
-opacity:.8;
-margin-bottom:25px;
+  color:var(--muted);
+  font-size:14px;
+  margin-top:12px;
 }
 
-input{
-width:100%;
-padding:15px;
-margin:7px 0;
-border:1px solid rgba(255,255,255,.2);
-border-radius:15px;
-background:rgba(0,0,0,.25);
-color:white;
-font-size:16px;
-outline:none;
+.form{
+  margin-top:28px;
 }
 
-button{
-width:100%;
-padding:15px;
-margin-top:15px;
-border:0;
-border-radius:16px;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-color:#48132e;
-background:white;
+label{
+  display:block;
+  color:rgba(255,255,255,.55);
+  font-size:11px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin:0 0 8px 4px;
 }
 
-.hidden{display:none}
-
-.apology{
-line-height:1.7;
-font-size:16px;
+.input{
+  width:100%;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.23);
+  color:white;
+  padding:16px 17px;
+  border-radius:17px;
+  outline:none;
+  font-size:15px;
+  margin-bottom:14px;
+  transition:.25s;
 }
 
-.gallery{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-top:25px;
+.input:focus{
+  border-color:rgba(255,111,159,.6);
+  box-shadow:0 0 0 4px rgba(255,111,159,.08);
 }
 
-.gallery img{
-width:100%;
-aspect-ratio:1;
-object-fit:cover;
-border-radius:18px;
-border:1px solid rgba(255,255,255,.2);
+/* ---------- BUTTON ---------- */
+
+.btn{
+  position:relative;
+  width:100%;
+  border:0;
+  border-radius:18px;
+  padding:17px;
+  margin-top:5px;
+  font-weight:600;
+  font-size:15px;
+  color:#39111f;
+  background:linear-gradient(135deg,#fff,#ffdce8);
+  cursor:pointer;
+  overflow:hidden;
+  box-shadow:0 14px 35px rgba(255,105,155,.15);
+  transition:transform .2s,box-shadow .2s;
 }
 
-.final{
-text-align:center;
-font-size:22px;
-margin:25px 0;
+.btn::after{
+  content:"";
+  position:absolute;
+  top:-100%;
+  left:-30%;
+  width:30%;
+  height:300%;
+  transform:rotate(25deg);
+  background:rgba(255,255,255,.55);
+  transition:left .6s;
+}
+
+.btn:hover::after{
+  left:120%;
+}
+
+.btn:active{
+  transform:scale(.98);
 }
 
 .error{
-color:#ffc4d9;
-text-align:center;
-margin-top:12px;
-font-size:14px;
+  min-height:20px;
+  color:#ffb8cd;
+  font-size:12px;
+  text-align:center;
+  margin-top:12px;
+}
+
+/* ---------- MAIN ---------- */
+
+.main{
+  animation:cardIn 1s cubic-bezier(.2,.8,.2,1);
+}
+
+.hero{
+  text-align:center;
+  padding:8px 0 26px;
+}
+
+.eyebrow{
+  color:var(--pink);
+  font-size:10px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.hero h2{
+  font-size:48px;
+  line-height:.95;
+}
+
+.hero p{
+  color:var(--muted);
+  font-size:14px;
+  margin-top:13px;
+}
+
+.divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:6px 0 25px;
+  color:rgba(255,255,255,.35);
+  font-size:13px;
+}
+
+.divider::before,
+.divider::after{
+  content:"";
+  height:1px;
+  flex:1;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);
+}
+
+.message{
+  color:rgba(255,255,255,.83);
+  font-size:15px;
+  line-height:1.85;
+}
+
+.message p{
+  margin-bottom:18px;
+}
+
+.highlight{
+  color:#fff;
+  font-weight:600;
+}
+
+.signature{
+  text-align:center;
+  font-family:"Cormorant Garamond",serif;
+  font-size:27px;
+  color:var(--soft);
+  margin:25px 0 8px;
+}
+
+/* ---------- REVEAL ---------- */
+
+.reveal{
+  margin-top:18px;
+}
+
+.final{
+  text-align:center;
+  padding:25px 0 15px;
+}
+
+.final .tiny{
+  color:var(--pink);
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+}
+
+.final h2{
+  font-size:34px;
+  margin-top:8px;
+}
+
+.gallery{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:11px;
+  margin-top:18px;
+}
+
+.photo{
+  position:relative;
+  overflow:hidden;
+  border-radius:20px;
+  aspect-ratio:1/1.12;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);
+  animation:photoIn .7s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.photo:nth-child(2){animation-delay:.08s}
+.photo:nth-child(3){animation-delay:.16s}
+.photo:nth-child(4){animation-delay:.24s}
+.photo:nth-child(5){animation-delay:.32s}
+.photo:nth-child(6){animation-delay:.40s}
+.photo:nth-child(7){animation-delay:.48s}
+.photo:nth-child(8){animation-delay:.56s}
+.photo:nth-child(9){animation-delay:.64s}
+.photo:nth-child(10){animation-delay:.72s}
+.photo:nth-child(11){animation-delay:.80s}
+.photo:nth-child(12){animation-delay:.88s}
+.photo:nth-child(13){animation-delay:.96s}
+.photo:nth-child(14){animation-delay:1.04s}
+
+@keyframes photoIn{
+  from{
+    opacity:0;
+    transform:translateY(20px) scale(.94);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.photo img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  transition:transform .6s ease;
+}
+
+.photo:hover img{
+  transform:scale(1.06);
+}
+
+.photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.25),transparent 45%);
+  pointer-events:none;
+}
+
+.photo .shine{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    110deg,
+    transparent 35%,
+    rgba(255,255,255,.15) 50%,
+    transparent 65%
+  );
+  transform:translateX(-120%);
+  animation:shine 4s ease-in-out infinite;
+  pointer-events:none;
+}
+
+@keyframes shine{
+  0%,55%{transform:translateX(-120%)}
+  75%,100%{transform:translateX(120%)}
+}
+
+.photo-error{
+  color:#ffb8cd;
+  text-align:center;
+  font-size:12px;
+  margin-top:15px;
 }
 
 .logout{
-background:transparent;
-color:white;
-border:1px solid rgba(255,255,255,.25);
+  margin-top:25px;
+  width:100%;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.035);
+  color:rgba(255,255,255,.65);
+  cursor:pointer;
 }
 
-.fade{
-animation:fade .8s ease;
+.footer{
+  text-align:center;
+  color:rgba(255,255,255,.25);
+  font-size:10px;
+  letter-spacing:1px;
+  margin-top:28px;
 }
 
-@keyframes fade{
-from{opacity:0;transform:translateY(20px)}
-to{opacity:1;transform:translateY(0)}
+/* ---------- MOBILE ---------- */
+
+@media(max-width:420px){
+  .wrap{
+    width:93%;
+    padding-top:16px;
+  }
+
+  .card{
+    padding:25px 18px;
+    border-radius:27px;
+  }
+
+  .brand h1,
+  .hero h2{
+    font-size:41px;
+  }
+
+  .gallery{
+    gap:8px;
+  }
+
+  .photo{
+    border-radius:16px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="hearts" id="hearts"></div>
+<div class="glow one"></div>
+<div class="glow two"></div>
+<div id="particles"></div>
 
-<div class="container">
+<main class="wrap">
 
-<div class="card" id="loginCard">
+<!-- LOGIN -->
+<section class="card login" id="loginCard">
 
-<div class="center">
-<div class="emoji">🥺❤️</div>
-<h1>Kuchupuchu</h1>
-<p class="subtitle">A little surprise, just for you ❤️</p>
-</div>
+  <div class="brand">
+    <div class="love-symbol">♡</div>
+    <div class="kicker">A little something</div>
+    <h1>For My<br>Kuchupuchu</h1>
+    <p class="subtitle">Some words I've been wanting to say. ❤️</p>
+  </div>
 
-<input id="email" type="email" placeholder="Your email">
-<input id="password" type="password" placeholder="Your password">
+  <div class="form">
 
-<button onclick="login()">Open My Surprise ❤️</button>
+    <label>Email</label>
+    <input
+      class="input"
+      id="email"
+      type="email"
+      placeholder="Enter your email"
+      autocomplete="email"
+    >
 
-<div id="loginError" class="error"></div>
+    <label>Password</label>
+    <input
+      class="input"
+      id="password"
+      type="password"
+      placeholder="Enter your password"
+      autocomplete="current-password"
+    >
 
-</div>
+    <button class="btn" onclick="login()">
+      Open My Surprise&nbsp; ♡
+    </button>
 
-<div class="card hidden fade" id="mainCard">
+    <div class="error" id="loginError"></div>
 
-<div class="center">
-<div class="emoji">💌</div>
-<h1>I'm Sorry, Baccha 🥺</h1>
-<p class="subtitle">For my Kuchupuchu ❤️</p>
-</div>
+  </div>
 
-<div class="apology">
+</section>
 
-<p>
-I know you're hurt, and I know I broke my promise by asking for your ID &amp; password again. I'm not going to defend myself because I was wrong. 🥺
-</p>
 
-<p>
-Please don't think I've changed so much that I'm no longer worthy of your love. You're still my same Kuchupuchu and you'll always be special to me. ❤️ I know it might take time for things to feel like they used to, but I'll make it up to you. 🫂
-</p>
+<!-- MAIN -->
+<section class="card main hidden" id="mainCard">
 
-<p>
-I'm really sorry, Baccha. ❤️
-</p>
+  <div class="hero">
+    <div class="eyebrow">From my heart</div>
+    <h2>I'm Sorry,<br>Baccha 🥺</h2>
+    <p>For my Kuchupuchu, always. ❤️</p>
+  </div>
 
-</div>
+  <div class="divider">♡</div>
 
-<button onclick="openSurprise()">Tap this, Baccha 🥺❤️</button>
+  <div class="message">
 
-<div id="surprise" class="hidden">
+    <p>
+      I know you're hurt, and I know I broke my promise by asking for your
+      ID &amp; password again. I'm not going to defend myself because
+      <span class="highlight">I was wrong.</span> 🥺
+    </p>
 
-<p class="final">
-Now please give me one cute smile? 🥹❤️
-</p>
+    <p>
+      Please don't think I've changed so much that I'm no longer worthy of
+      your love. You're still my same Kuchupuchu and you'll always be
+      special to me. ❤️
+    </p>
 
-<div id="gallery" class="gallery"></div>
+    <p>
+      I know it might take time for things to feel like they used to,
+      but I'll make it up to you. 🫂
+    </p>
 
-<div id="photoError" class="error"></div>
+    <p>
+      I'm really sorry, Baccha. ❤️
+    </p>
 
-<button class="logout" onclick="logout()">Logout</button>
+  </div>
 
-</div>
+  <div class="signature">With all my heart, always.</div>
 
-</div>
-</div>
+  <button class="btn" onclick="openSurprise()">
+    Tap this, Baccha&nbsp; 🥺❤️
+  </button>
+
+  <div class="reveal hidden" id="surprise">
+
+    <div class="final">
+      <div class="tiny">One last thing</div>
+      <h2>Now give me<br>one cute smile? 🥹❤️</h2>
+    </div>
+
+    <div class="gallery" id="gallery"></div>
+
+    <div class="photo-error" id="photoError"></div>
+
+    <button class="logout" onclick="logout()">
+      Close Surprise
+    </button>
+
+  </div>
+
+  <div class="footer">
+    made with a little love ♡
+  </div>
+
+</section>
+
+</main>
+
 
 <script>
 
@@ -222,11 +666,15 @@ const SUPABASE_KEY =
 
 const supabaseClient =
 window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
+
+/* PRIVATE STORAGE FILES */
+
 const photos = [
+
 "IMG_20260119_142041.jpg",
 "IMG_20260124_095746.jpg",
 "IMG_20260417_114712.jpg",
@@ -241,122 +689,199 @@ const photos = [
 "IMG_20260907_184542.jpg",
 "IMG_20260907_184555.jpg",
 "IMG_20260107_201059_040.webp"
+
 ];
 
-for(let i=0;i<18;i++){
 
-const h=document.createElement("div");
+/* FLOATING HEARTS */
 
-h.className="heart";
-h.innerHTML="❤️";
-h.style.left=Math.random()*100+"%";
-h.style.fontSize=(14+Math.random()*25)+"px";
-h.style.animationDelay=Math.random()*9+"s";
+const particleBox =
+document.getElementById("particles");
 
-document.getElementById("hearts").appendChild(h);
+for(let i=0;i<22;i++){
+
+  const p =
+  document.createElement("div");
+
+  p.className="particle";
+  p.textContent =
+  Math.random() > .35 ? "♡" : "♥";
+
+  p.style.left =
+  Math.random()*100+"%";
+
+  p.style.fontSize =
+  (12+Math.random()*22)+"px";
+
+  p.style.animationDuration =
+  (8+Math.random()*8)+"s";
+
+  p.style.animationDelay =
+  (-Math.random()*12)+"s";
+
+  p.style.setProperty(
+    "--drift",
+    ((Math.random()-.5)*100)+"px"
+  );
+
+  particleBox.appendChild(p);
 }
+
+
+/* LOGIN */
 
 async function login(){
 
-const email =
-document.getElementById("email").value.trim();
+  const email =
+  document.getElementById("email")
+  .value.trim();
 
-const password =
-document.getElementById("password").value;
+  const password =
+  document.getElementById("password")
+  .value;
 
-const error =
-document.getElementById("loginError");
+  const error =
+  document.getElementById("loginError");
 
-error.textContent="";
+  error.textContent="";
 
-if(!email || !password){
+  if(!email || !password){
 
-error.textContent =
-"Please enter your email and password.";
+    error.textContent =
+    "Please enter your email and password.";
 
-return;
+    return;
+  }
+
+  const {error:loginError} =
+  await supabaseClient.auth
+  .signInWithPassword({
+    email:email,
+    password:password
+  });
+
+  if(loginError){
+
+    error.textContent =
+    "Login failed: "+loginError.message;
+
+    return;
+  }
+
+  document
+  .getElementById("loginCard")
+  .classList.add("hidden");
+
+  document
+  .getElementById("mainCard")
+  .classList.remove("hidden");
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
 }
 
-const {error:loginError} =
-await supabaseClient.auth.signInWithPassword({
-email:email,
-password:password
-});
 
-if(loginError){
-
-error.textContent =
-"Login failed: "+loginError.message;
-
-return;
-}
-
-document.getElementById("loginCard")
-.classList.add("hidden");
-
-document.getElementById("mainCard")
-.classList.remove("hidden");
-}
+/* SURPRISE */
 
 async function openSurprise(){
 
-document.getElementById("surprise")
-.classList.remove("hidden");
+  document
+  .getElementById("surprise")
+  .classList.remove("hidden");
 
-document.getElementById("surprise")
-.scrollIntoView({
-behavior:"smooth"
-});
+  document
+  .getElementById("surprise")
+  .scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
 
-await loadPhotos();
+  await loadPhotos();
 }
+
+
+/* SIGNED URL PHOTOS */
 
 async function loadPhotos(){
 
-const gallery =
-document.getElementById("gallery");
+  const gallery =
+  document.getElementById("gallery");
 
-const error =
-document.getElementById("photoError");
+  const error =
+  document.getElementById("photoError");
 
-gallery.innerHTML="";
-error.textContent="";
+  gallery.innerHTML="";
+  error.textContent="";
 
-let loaded=0;
+  let loaded=0;
 
-for(const file of photos){
+  for(const file of photos){
 
-const {data,error:signedError} =
-await supabaseClient.storage
-.from("baccha-photos")
-.createSignedUrl(file,3600);
+    const result =
+    await supabaseClient.storage
+    .from("baccha-photos")
+    .createSignedUrl(
+      file,
+      3600
+    );
 
-if(!signedError && data?.signedUrl){
+    if(
+      !result.error &&
+      result.data &&
+      result.data.signedUrl
+    ){
 
-const img =
-document.createElement("img");
+      const wrapper =
+      document.createElement("div");
 
-img.src=data.signedUrl;
-img.alt="Our memory ❤️";
-img.loading="lazy";
+      wrapper.className="photo";
 
-gallery.appendChild(img);
-loaded++;
+      const img =
+      document.createElement("img");
+
+      img.src =
+      result.data.signedUrl;
+
+      img.alt="Our memory ❤️";
+
+      img.loading="lazy";
+
+      const shine =
+      document.createElement("div");
+
+      shine.className="shine";
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(shine);
+
+      gallery.appendChild(wrapper);
+
+      loaded++;
+    }
+  }
+
+  if(loaded===0){
+
+    error.textContent =
+    "Photos couldn't be loaded. Please check the Storage policy.";
+
+  }else{
+
+    error.textContent =
+    loaded+" memories loaded ❤️";
+  }
 }
-}
 
-if(loaded===0){
 
-error.textContent =
-"Photos could not be loaded. Please check your Storage policy.";
-}
-}
+/* LOGOUT */
 
 async function logout(){
 
-await supabaseClient.auth.signOut();
+  await supabaseClient.auth.signOut();
 
-location.reload();
+  location.reload();
 }
 
 </script>
