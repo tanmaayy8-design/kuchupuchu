@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuchupuchu ❤️</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+min-height:100vh;
+font-family:Arial,sans-serif;
+color:white;
+background:linear-gradient(135deg,#160914,#541735,#190914);
+overflow-x:hidden;
+}
+
+.hearts{
+position:fixed;
+inset:0;
+pointer-events:none;
+overflow:hidden;
+}
+
+.heart{
+position:absolute;
+bottom:-50px;
+animation:up 9s linear infinite;
+opacity:.25;
+}
+
+@keyframes up{
+0%{transform:translateY(0) rotate(0);opacity:0}
+20%{opacity:.3}
+100%{transform:translateY(-115vh) rotate(360deg);opacity:0}
+}
+
+.container{
+width:92%;
+max-width:520px;
+margin:auto;
+padding:30px 0 60px;
+}
+
+.card{
+background:rgba(255,255,255,.10);
+border:1px solid rgba(255,255,255,.18);
+border-radius:28px;
+padding:25px;
+backdrop-filter:blur(18px);
+box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+.center{text-align:center}
+
+.emoji{font-size:55px}
+
+h1{
+font-size:32px;
+margin:8px 0;
+}
+
+.subtitle{
+opacity:.8;
+margin-bottom:25px;
+}
+
+input{
+width:100%;
+padding:15px;
+margin:7px 0;
+border:1px solid rgba(255,255,255,.2);
+border-radius:15px;
+background:rgba(0,0,0,.25);
+color:white;
+font-size:16px;
+outline:none;
+}
+
+button{
+width:100%;
+padding:15px;
+margin-top:15px;
+border:0;
+border-radius:16px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+color:#48132e;
+background:white;
+}
+
+.hidden{display:none}
+
+.apology{
+line-height:1.7;
+font-size:16px;
+}
+
+.gallery{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:25px;
+}
+
+.gallery img{
+width:100%;
+aspect-ratio:1;
+object-fit:cover;
+border-radius:18px;
+border:1px solid rgba(255,255,255,.2);
+}
+
+.final{
+text-align:center;
+font-size:22px;
+margin:25px 0;
+}
+
+.error{
+color:#ffc4d9;
+text-align:center;
+margin-top:12px;
+font-size:14px;
+}
+
+.logout{
+background:transparent;
+color:white;
+border:1px solid rgba(255,255,255,.25);
+}
+
+.fade{
+animation:fade .8s ease;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<div class="container">
+
+<div class="card" id="loginCard">
+
+<div class="center">
+<div class="emoji">🥺❤️</div>
+<h1>Kuchupuchu</h1>
+<p class="subtitle">A little surprise, just for you ❤️</p>
+</div>
+
+<input id="email" type="email" placeholder="Your email">
+<input id="password" type="password" placeholder="Your password">
+
+<button onclick="login()">Open My Surprise ❤️</button>
+
+<div id="loginError" class="error"></div>
+
+</div>
+
+<div class="card hidden fade" id="mainCard">
+
+<div class="center">
+<div class="emoji">💌</div>
+<h1>I'm Sorry, Baccha 🥺</h1>
+<p class="subtitle">For my Kuchupuchu ❤️</p>
+</div>
+
+<div class="apology">
+
+<p>
+I know you're hurt, and I know I broke my promise by asking for your ID &amp; password again. I'm not going to defend myself because I was wrong. 🥺
+</p>
+
+<p>
+Please don't think I've changed so much that I'm no longer worthy of your love. You're still my same Kuchupuchu and you'll always be special to me. ❤️ I know it might take time for things to feel like they used to, but I'll make it up to you. 🫂
+</p>
+
+<p>
+I'm really sorry, Baccha. ❤️
+</p>
+
+</div>
+
+<button onclick="openSurprise()">Tap this, Baccha 🥺❤️</button>
+
+<div id="surprise" class="hidden">
+
+<p class="final">
+Now please give me one cute smile? 🥹❤️
+</p>
+
+<div id="gallery" class="gallery"></div>
+
+<div id="photoError" class="error"></div>
+
+<button class="logout" onclick="logout()">Logout</button>
+
+</div>
+
+</div>
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://hhvbsrkvhgllmkkkmqut.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_MjR_HcMPLmyzkQJRTt-x6A_ENBDB5Bs";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+const photos = [
+"IMG_20260119_142041.jpg",
+"IMG_20260124_095746.jpg",
+"IMG_20260417_114712.jpg",
+"IMG_20260417_114901.jpg",
+"IMG_20260417_115350.jpg",
+"IMG_20260417_121327.jpg",
+"IMG_20260417_122231.jpg",
+"IMG_20260907_184437.jpg",
+"IMG_20260907_184510.jpg",
+"IMG_20260907_184521.jpg",
+"IMG_20260907_184532.jpg",
+"IMG_20260907_184542.jpg",
+"IMG_20260907_184555.jpg",
+"IMG_20260107_201059_040.webp"
+];
+
+for(let i=0;i<18;i++){
+
+const h=document.createElement("div");
+
+h.className="heart";
+h.innerHTML="❤️";
+h.style.left=Math.random()*100+"%";
+h.style.fontSize=(14+Math.random()*25)+"px";
+h.style.animationDelay=Math.random()*9+"s";
+
+document.getElementById("hearts").appendChild(h);
+}
+
+async function login(){
+
+const email =
+document.getElementById("email").value.trim();
+
+const password =
+document.getElementById("password").value;
+
+const error =
+document.getElementById("loginError");
+
+error.textContent="";
+
+if(!email || !password){
+
+error.textContent =
+"Please enter your email and password.";
+
+return;
+}
+
+const {error:loginError} =
+await supabaseClient.auth.signInWithPassword({
+email:email,
+password:password
+});
+
+if(loginError){
+
+error.textContent =
+"Login failed: "+loginError.message;
+
+return;
+}
+
+document.getElementById("loginCard")
+.classList.add("hidden");
+
+document.getElementById("mainCard")
+.classList.remove("hidden");
+}
+
+async function openSurprise(){
+
+document.getElementById("surprise")
+.classList.remove("hidden");
+
+document.getElementById("surprise")
+.scrollIntoView({
+behavior:"smooth"
+});
+
+await loadPhotos();
+}
+
+async function loadPhotos(){
+
+const gallery =
+document.getElementById("gallery");
+
+const error =
+document.getElementById("photoError");
+
+gallery.innerHTML="";
+error.textContent="";
+
+let loaded=0;
+
+for(const file of photos){
+
+const {data,error:signedError} =
+await supabaseClient.storage
+.from("baccha-photos")
+.createSignedUrl(file,3600);
+
+if(!signedError && data?.signedUrl){
+
+const img =
+document.createElement("img");
+
+img.src=data.signedUrl;
+img.alt="Our memory ❤️";
+img.loading="lazy";
+
+gallery.appendChild(img);
+loaded++;
+}
+}
+
+if(loaded===0){
+
+error.textContent =
+"Photos could not be loaded. Please check your Storage policy.";
+}
+}
+
+async function logout(){
+
+await supabaseClient.auth.signOut();
+
+location.reload();
+}
+
+</script>
+
+</body>
+  </html>
